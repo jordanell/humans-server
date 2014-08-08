@@ -1,0 +1,15 @@
+{
+  "name": "humans-server",
+  "description": "The node server for the humans chat app",
+  "author": "Humans",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "./go.sh"
+  },
+  "dependencies": {
+    "express": "~4.0.0",
+    "mongoose": "^3.6.20",
+    "socket.io": "~1.0.6"
+  }
+}
