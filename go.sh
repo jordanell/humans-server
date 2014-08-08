@@ -1,2 +1,2 @@
 npm install
-nodemon api/main.coffee
+nodemon app/main.coffee
