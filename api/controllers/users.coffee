@@ -6,7 +6,7 @@ class UsersController extends Controller
 
     # POST /users
     create: (req, res) ->
-      user = new User({uuid: uuid.v4()})
+      user = new User({id: uuid.v4()})
       user.save (err) ->
         if err
           res.json error: err
