@@ -9,8 +9,8 @@ class UsersController extends Controller
       user = new User({id: uuid.v4()})
       user.save (err) ->
         if err
-          res.json error: err
+          res.json Error: err
         else
           res.json {result: "success", user: user}
 
-      #Do something
+module.exports = new UsersController()

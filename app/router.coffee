@@ -5,4 +5,4 @@ module.exports = (router) ->
   ##################################
 
   router.route '/users'
-    .post require('../controllers/users').create
+    .post require('./controllers/users').create

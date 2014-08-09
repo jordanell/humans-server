@@ -1,5 +1,5 @@
 mongoose  = require 'mongoose'
-Schema    = mongoos.Schema
+Schema    = mongoose.Schema
 
 MessageSchema = new Schema
   id:             String
