@@ -26,4 +26,27 @@ class MessagesController extends Controller
               else
                 res.json {result: "success", message: message}
 
+    # GET /messages
+    index: (req, res) ->
+      unless req.params.conversation_id
+        return res.json err: "Must provide a conversation id"
+
+      unless req.params.user_id
+        return res.json err: "Must provide a user id"
+
+      Conversation.findById req.params.conversation_id, (err, conversation) =>
+        if err then return res.send err
+
+        if !_.contains(conversation.userIds, req.params.user_id) 
+          return res.json err: "Unauthorized conversation access"
+
+        skip = 0
+        if req.params.page and !isNaN(req.params.page) and req.params.page >= 1
+          page = req.params.page - 1
+          skip = @PAGE_SIZE * page
+
+        Message.find({conversationId: conversation.id, }).sort({created: -1}).skip(skip).limit(@PAGE_SIZE)
+
+
+
 module.exports = new MessagesController()
