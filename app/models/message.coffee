@@ -4,7 +4,7 @@ Schema    = mongoose.Schema
 MessageSchema = new Schema
   id:             String
   body:           String
-  user:           String
+  userId:         String
   conversationId: String
   created:        Date
 
