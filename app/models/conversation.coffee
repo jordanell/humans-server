@@ -7,4 +7,4 @@ ConversationSchema = new Schema
   created:  Date
   updated:  Date
 
-module.exports = mongoose.model 'User', ConversationSchema
+module.exports = mongoose.model 'Conversation', ConversationSchema

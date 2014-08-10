@@ -8,4 +8,4 @@ MessageSchema = new Schema
   conversationId: String
   created:        Date
 
-module.exports = mongoose.model 'User', MessageSchema
+module.exports = mongoose.model 'Message', MessageSchema

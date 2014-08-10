@@ -2,7 +2,7 @@ Controller    = require './base_controller'
 Message       = require '../models/message'
 Conversation  = require '../models/conversation'
 
-class UsersController extends Controller
+class MessagesController extends Controller
 
     # POST /messages
     create: (req, res) ->
@@ -13,8 +13,7 @@ class UsersController extends Controller
         if !_.contains(conversation.userIds, req.params.user_id) 
           return res.json err: "Unauthorized conversation access"
 
-        message = new Message({id: getId(), body: req.params.body, userId: req.params.user_id, 
-          conversationId: req.params.conversation_id, created: Date()})
+        message = new Message({id: getId(), body: req.params.body, userId: req.params.user_id, conversationId: req.params.conversation_id, created: Date()})
 
         message.save (err) =>
           if err
@@ -27,4 +26,4 @@ class UsersController extends Controller
               else
                 res.json {result: "success", message: message}
 
-module.exports = new UsersController()
+module.exports = new MessagesController()

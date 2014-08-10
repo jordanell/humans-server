@@ -14,4 +14,16 @@ module.exports = (router) ->
 
   Router.resource 'users', controller: 'users', only: [create]
 
+  ##################################
+  ######### Conversation ###########
+  ##################################
+
+  Router.resource 'conversations', controller: 'conversations', only: [create]
+
+  ##################################
+  ########### Messages #############
+  ##################################
+
+  Router.resource 'messages', controller: 'messages', only: [create]
+
   return router
