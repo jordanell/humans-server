@@ -3,7 +3,7 @@ Schema    = mongoose.Schema
 
 ConversationSchema = new Schema
   id:       String
-  userIds:  [String]
+  userIds:  []
   created:  Date
   updated:  Date
 

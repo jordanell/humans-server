@@ -5,6 +5,8 @@ config        = require 'config'
 createRoutes  = require './routes'
 presence      = require './presence_manager'
 
+db = require './db/db'
+
 app     = express()
 server  = http.createServer app
 io      = socketio.listen server
@@ -13,7 +15,7 @@ port = config.get('server.port')
 
 router = createRoutes()
 
-app.use '/api', router
+app.use '/', router
 
 io.on 'connection', (socket) =>
   socket.on 'connect user', (data, cb) =>
