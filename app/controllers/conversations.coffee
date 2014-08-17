@@ -9,7 +9,9 @@ class ConversationsController extends Controller
       unless req.query.user_id
         return res.json err: "Must provide a user id"
 
-      User.random (err, user) =>
+      @getRandomUser req.query.user_id, (err, user) =>
+        return res.json err: "Could not find a user" if user is null
+
         userIds = [user.id, req.query.user_id]
         time    = Date()
 
@@ -43,5 +45,17 @@ class ConversationsController extends Controller
           return res.json {err: "Unauthorized access"}
 
         return res.json {result: "success", conversation: conversation}
+
+    getRandomUser: (userId, cb, level = 0) =>
+      if level >= 5
+        return cb({err: "Could not find user"}, null)
+
+      User.random (err, user) =>
+        if err then return cb({err: "Could not find user"}, null)
+
+        if user.id == userId
+          return @getRandomUser(userId, level + 1)
+
+        return cb(null, user)
 
 module.exports = new ConversationsController()
