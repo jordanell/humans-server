@@ -2,7 +2,8 @@ mongoose  = require 'mongoose'
 Schema    = mongoose.Schema
 
 UserSchema = new Schema
-  id: String
+  id:   String
+  name: String
 
 UserSchema.statics.random = (callback) ->
   @count ((err, count) =>

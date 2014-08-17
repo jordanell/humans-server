@@ -13,7 +13,7 @@ class ConversationsController extends Controller
         userIds = [user.id, req.query.user_id]
         time    = Date()
 
-        conversation = new Conversation({id: @getId(), userIds: userIds, created: time, updated: time})
+        conversation = new Conversation({id: @getId(), userIds: userIds, name: user.name, created: time, updated: time})
 
         conversation.save (err) =>
           if err

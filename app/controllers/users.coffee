@@ -5,7 +5,7 @@ class UsersController extends Controller
 
     # POST /users
     create: (req, res) =>
-      user = new User({id: @getId()})
+      user = new User({id: @getId(), name: 'Anonymous'})
       user.save (err) ->
         if err
           res.json Error: err
