@@ -21,6 +21,7 @@ class MessagesController extends Controller
             res.send err
           else
             conversation.updated = message.created
+            conversation.lastMessage = message.body
             conversation.save (err) =>
               if err
                 res .send err
