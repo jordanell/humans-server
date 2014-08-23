@@ -1,3 +1,5 @@
+global.logger = require("../utils/logger")
+
 express       = require 'express'
 http          = require 'http'
 socketio      = require 'socket.io'

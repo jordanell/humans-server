@@ -30,7 +30,6 @@ class ConversationsController extends Controller
 
       Conversation.find {userIds: {$in: [req.query.user_id]}}, null, {sort: {updated: -1}}, (err, conversations) =>
         if err then res.send err
-
         return res.json {result: "success", conversations: conversations}
 
     # GET /conversations/:id
@@ -38,13 +37,35 @@ class ConversationsController extends Controller
       unless req.query.user_id
         return res.json err: "Must provide a user id"
 
-      Conversation.findOne { id: req.query.user_id }, (err, conversation) =>
+      Conversation.findOne { id: req.query.conversation_id }, (err, conversation) =>
         if err then res.send err
 
         if !_.contains(conversation.userIds, req.user_id)
           return res.json {err: "Unauthorized access"}
 
         return res.json {result: "success", conversation: conversation}
+
+    # PATCH /conversations/leave
+    leave: (req, res) =>
+      unless req.query.user_id
+        return res.json err: "Must provide a user id"
+
+      Conversation.findOne { id: req.query.conversation_id }, (err, conversation) =>
+        if err then res.send err
+
+        if !_.contains(conversation.userIds, req.user_id)
+          return res.json {err: "Unauthorized access"}
+
+        conversation.userIds = _.without(conversation.userIds, req.query.user_id)
+
+        message = new Message({id: @getId(), body: "The other human has left this conversation", userId: req.query.user_id, conversationId: req.query.conversation_id, created: Date()})
+
+        message.save () => return
+
+        conversation.save (err) =>
+          if err then return res.send err
+          res.json {result: "success", message: "Removed from conversation"}
+
 
     getRandomUser: (userId, cb, level = 0) =>
       if level >= 5

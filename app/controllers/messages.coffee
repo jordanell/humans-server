@@ -47,7 +47,10 @@ class MessagesController extends Controller
           page = req.query.page - 1
           skip = @PAGE_SIZE * page
 
-        Message.find({conversationId: conversation.id, }).sort({created: -1}).skip(skip).limit(@PAGE_SIZE)
+        Message.find {conversationId: conversation.id, }, null, {}, (err, messages) =>
+          if err then res.send err
+          return res.json {result: "success", messages: messages}
+
 
 
 
