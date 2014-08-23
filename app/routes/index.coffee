@@ -19,7 +19,7 @@ module.exports = (router) ->
   ##################################
 
   Router.resource 'conversations', controller: 'conversations', only: [create, index, show]
-  Router.patch 'conversations/leave', controller: 'conversations', action: 'leave'
+  Router.put 'conversations/leave', controller: 'conversations', action: 'leave'
 
   ##################################
   ########### Messages #############

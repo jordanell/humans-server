@@ -1,8 +1,7 @@
-_             = require 'underscore'
-
 Controller    = require './base_controller'
 Message       = require '../models/message'
 Conversation  = require '../models/conversation'
+_             = require 'underscore'
 
 class MessagesController extends Controller
 

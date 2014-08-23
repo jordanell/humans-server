@@ -16,7 +16,7 @@ _actions = [index, create, show, update, destroy]
 _verbs =
   get: "GET"
   post: "POST"
-  patch: "patch"
+  put: "put"
   del: "DELETE"
 
 # Router.resource 'u', controller: 'users', only: ['create', 'show']
@@ -62,7 +62,7 @@ class Router
       when show
         @router.route("/#{path}/:id").get methods
       when update
-        @router.route("/#{path}/:id").patch methods
+        @router.route("/#{path}/:id").put methods
       when destroy
         @router.route("/#{path}/:id").delete methods
 
@@ -72,8 +72,8 @@ class Router
   get: (path, opts) ->
     @createCustomRoute "get", path, opts
 
-  patch: (path, opts) ->
-    @createCustomRoute "patch", path, opts
+  put: (path, opts) ->
+    @createCustomRoute "put", path, opts
 
   delete: (path, opts) ->
     @createCustomRoute "delete", path, opts

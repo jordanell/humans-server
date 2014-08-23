@@ -1,6 +1,8 @@
 Controller    = require './base_controller'
 Conversation  = require '../models/conversation'
 User          = require '../models/user'
+Message       = require '../models/message'
+_             = require 'underscore'
 
 class ConversationsController extends Controller
 
@@ -40,12 +42,12 @@ class ConversationsController extends Controller
       Conversation.findOne { id: req.query.conversation_id }, (err, conversation) =>
         if err then res.send err
 
-        if !_.contains(conversation.userIds, req.user_id)
+        if !_.contains(conversation.userIds, req.query.user_id)
           return res.json {err: "Unauthorized access"}
 
         return res.json {result: "success", conversation: conversation}
 
-    # PATCH /conversations/leave
+    # PUT /conversations/leave
     leave: (req, res) =>
       unless req.query.user_id
         return res.json err: "Must provide a user id"
@@ -53,14 +55,14 @@ class ConversationsController extends Controller
       Conversation.findOne { id: req.query.conversation_id }, (err, conversation) =>
         if err then res.send err
 
-        if !_.contains(conversation.userIds, req.user_id)
+        if !_.contains(conversation.userIds, req.query.user_id)
           return res.json {err: "Unauthorized access"}
 
         conversation.userIds = _.without(conversation.userIds, req.query.user_id)
 
         message = new Message({id: @getId(), body: "The other human has left this conversation", userId: req.query.user_id, conversationId: req.query.conversation_id, created: Date()})
 
-        message.save () => return
+        message.save () =>
 
         conversation.save (err) =>
           if err then return res.send err
