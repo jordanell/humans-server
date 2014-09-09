@@ -11,7 +11,7 @@ class MessagesController extends Controller
         if err
           return res.send err
 
-        if !_.contains(conversation.userIds, req.query.user_id) 
+        if !_.contains(conversation.userIds, req.query.user_id)
           return res.json err: "Unauthorized conversation access"
 
         message = new Message({id: @getId(), body: req.query.body, userId: req.query.user_id, conversationId: req.query.conversation_id, created: Date()})
@@ -39,15 +39,18 @@ class MessagesController extends Controller
       Conversation.findOne { id: req.query.conversation_id }, (err, conversation) =>
         if err then return res.send err
 
-        if !_.contains(conversation.userIds, req.query.user_id) 
+        if !_.contains(conversation.userIds, req.query.user_id)
           return res.json err: "Unauthorized conversation access"
+
+        unless req.query.page
+          req.query.page = 1
 
         skip = 0
         if req.query.page and !isNaN(req.query.page) and req.query.page >= 1
           page = req.query.page - 1
           skip = @PAGE_SIZE * page
 
-        Message.find {conversationId: conversation.id, }, null, {}, (err, messages) =>
+        Message.find {conversationId: conversation.id, }, null, {created: {updated: -1}, skip: ((req.query.page-1) * @PAGE_SIZE), limit: (@PAGE_SIZE)}, (err, messages) =>
           if err then res.send err
           return res.json {result: "success", messages: messages}
 

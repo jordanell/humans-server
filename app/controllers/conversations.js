@@ -69,6 +69,9 @@ ConversationsController = (function(_super) {
         err: "Must provide a user id"
       });
     }
+    if (!req.query.page) {
+      req.query.page = 1;
+    }
     return Conversation.find({
       userIds: {
         $in: [req.query.user_id]
@@ -76,7 +79,9 @@ ConversationsController = (function(_super) {
     }, null, {
       sort: {
         updated: -1
-      }
+      },
+      skip: (req.query.page - 1) * this.PAGE_SIZE,
+      limit: this.PAGE_SIZE
     }, (function(_this) {
       return function(err, conversations) {
         if (err) {

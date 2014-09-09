@@ -30,7 +30,10 @@ class ConversationsController extends Controller
       unless req.query.user_id
         return res.json err: "Must provide a user id"
 
-      Conversation.find {userIds: {$in: [req.query.user_id]}}, null, {sort: {updated: -1}}, (err, conversations) =>
+      unless req.query.page
+        req.query.page = 1
+
+      Conversation.find {userIds: {$in: [req.query.user_id]}}, null, {sort: {updated: -1}, skip: ((req.query.page-1) * @PAGE_SIZE), limit: (@PAGE_SIZE)}, (err, conversations) =>
         if err then res.send err
         return res.json {result: "success", conversations: conversations}
 
