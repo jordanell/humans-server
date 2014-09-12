@@ -1,20 +1,21 @@
 Controller    = require './base_controller'
 Message       = require '../models/message'
 Conversation  = require '../models/conversation'
+presence      = require '../presence_manager'
 _             = require 'underscore'
 
 class MessagesController extends Controller
 
     # POST /messages
     create: (req, res) =>
-      Conversation.findOne { id: req.query.conversation_id }, (err, conversation) =>
+      Conversation.findOne { id: req.param('conversation_id') }, (err, conversation) =>
         if err
           return res.send err
 
-        if !_.contains(conversation.userIds, req.query.user_id)
+        if !_.contains(conversation.userIds, req.param('user_id'))
           return res.json err: "Unauthorized conversation access"
 
-        message = new Message({id: @getId(), body: req.query.body, userId: req.query.user_id, conversationId: req.query.conversation_id, created: Date()})
+        message = new Message({id: @getId(), body: req.param('body'), userId: req.param('user_id'), conversationId: req.param('conversation_id'), created: Date()})
 
         message.save (err) =>
           if err
@@ -26,35 +27,35 @@ class MessagesController extends Controller
               if err
                 res .send err
               else
+                @broadcastMessage message, _.filter conversation.userIds, (userId) => userId isnt req.param('user_id')
                 res.json {result: "success", message: message}
 
     # GET /messages
     index: (req, res) =>
-      unless req.query.conversation_id
+      unless req.param('conversation_id')
         return res.json err: "Must provide a conversation id"
 
-      unless req.query.user_id
+      unless req.param('user_id')
         return res.json err: "Must provide a user id"
 
-      Conversation.findOne { id: req.query.conversation_id }, (err, conversation) =>
+      Conversation.findOne { id: req.param('conversation_id') }, (err, conversation) =>
         if err then return res.send err
 
-        if !_.contains(conversation.userIds, req.query.user_id)
+        if !_.contains(conversation.userIds, req.param('user_id'))
           return res.json err: "Unauthorized conversation access"
 
-        unless req.query.page
-          req.query.page = 1
+        unless req.param('page')
+          req.params.page = 1
 
-        skip = 0
-        if req.query.page and !isNaN(req.query.page) and req.query.page >= 1
-          page = req.query.page - 1
-          skip = @PAGE_SIZE * page
-
-        Message.find {conversationId: conversation.id, }, null, {created: {updated: -1}, skip: ((req.query.page-1) * @PAGE_SIZE), limit: (@PAGE_SIZE)}, (err, messages) =>
+        Message.find {conversationId: conversation.id, }, null, {created: {updated: -1}, skip: ((req.param('page')-1) * @PAGE_SIZE), limit: (@PAGE_SIZE)}, (err, messages) =>
           if err then res.send err
           return res.json {result: "success", messages: messages}
 
+    # Helper methods
 
-
+    broadcastMessage: (message, userIds = []) ->
+      for userId in userIds
+        if socket = presence.get().getUser userId
+          socket.send message
 
 module.exports = new MessagesController()

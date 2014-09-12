@@ -2,25 +2,26 @@ module.exports = class PresenceManager
 
   instance = null
 
-  onlineUserIds = {}
+  class PrivateClass
+    onlineUserIds: {}
+
+    connectUser: (userId, socket) ->
+      return unless userId and socket
+      @onlineUserIds[userId] = socket
+
+    disconnectUser: (userId) ->
+      return unless userId
+      delete @onlineUserIds[userId]
+
+    getOnlineUsers: ->
+      return @onlineUserIds
+
+    isUserOnline: (userId) ->
+      return false unless userId
+      userId in @onlineUserIds
+
+    getUser: (userId) ->
+      return @onlineUserIds[userId]
 
   @get: ->
-    if not @instance?
-      instance = new @
-    
-    instance
-
-  connectUser: (userId, socket) ->
-    return unless userId and socket
-    @onlineUserIds[userId] = socket
-
-  disconnectUser: (userId) ->
-    return unless userId
-    delete @onlineUserIds[userId]
-
-  getOnlineUsers: ->
-    return @onlineUserIds
-
-  isUserOnline: (userId) ->
-    return false unless userId
-    userId in @onlineUserIds
+    instance ?= new PrivateClass()

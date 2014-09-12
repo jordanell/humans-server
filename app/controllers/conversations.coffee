@@ -8,13 +8,13 @@ class ConversationsController extends Controller
 
     # POST /conversations
     create: (req, res) =>
-      unless req.query.user_id
+      unless req.param('user_id')
         return res.json err: "Must provide a user id"
 
-      @getRandomUser req.query.user_id, (err, user) =>
+      @getRandomUser req.param('user_id'), (err, user) =>
         return res.json err: "Could not find a user" if user is null
 
-        userIds = [user.id, req.query.user_id]
+        userIds = [user.id, req.param('user_id')]
         time    = Date()
 
         conversation = new Conversation({id: @getId(), userIds: userIds, name: user.name, created: time, updated: time})
@@ -27,43 +27,43 @@ class ConversationsController extends Controller
 
     # GET /conversations
     index: (req, res) =>
-      unless req.query.user_id
+      unless req.param('user_id')
         return res.json err: "Must provide a user id"
 
-      unless req.query.page
-        req.query.page = 1
+      unless req.param('page')
+        req.params.page = 1
 
-      Conversation.find {userIds: {$in: [req.query.user_id]}}, null, {sort: {updated: -1}, skip: ((req.query.page-1) * @PAGE_SIZE), limit: (@PAGE_SIZE)}, (err, conversations) =>
+      Conversation.find {userIds: {$in: [req.param('user_id')]}}, null, {sort: {updated: -1}, skip: ((req.param('page')-1) * @PAGE_SIZE), limit: (@PAGE_SIZE)}, (err, conversations) =>
         if err then res.send err
         return res.json {result: "success", conversations: conversations}
 
     # GET /conversations/:id
     show: (req, res) =>
-      unless req.query.user_id
+      unless req.param('user_id')
         return res.json err: "Must provide a user id"
 
-      Conversation.findOne { id: req.query.conversation_id }, (err, conversation) =>
+      Conversation.findOne { id: req.param('conversation_id') }, (err, conversation) =>
         if err then res.send err
 
-        if !_.contains(conversation.userIds, req.query.user_id)
+        if !_.contains(conversation.userIds, req.param('user_id'))
           return res.json {err: "Unauthorized access"}
 
         return res.json {result: "success", conversation: conversation}
 
     # PUT /conversations/leave
     leave: (req, res) =>
-      unless req.query.user_id
+      unless req.param('user_id')
         return res.json err: "Must provide a user id"
 
-      Conversation.findOne { id: req.query.conversation_id }, (err, conversation) =>
+      Conversation.findOne { id: req.param('conversation_id') }, (err, conversation) =>
         if err then res.send err
 
-        if !_.contains(conversation.userIds, req.query.user_id)
+        if !_.contains(conversation.userIds, req.param('user_id'))
           return res.json {err: "Unauthorized access"}
 
-        conversation.userIds = _.without(conversation.userIds, req.query.user_id)
+        conversation.userIds = _.without(conversation.userIds, req.param('user_id'))
 
-        message = new Message({id: @getId(), body: "The other human has left this conversation", userId: req.query.user_id, conversationId: req.query.conversation_id, created: Date()})
+        message = new Message({id: @getId(), body: "The other human has left this conversation", userId: req.param('user_id'), conversationId: req.param('conversation_id'), created: Date()})
 
         message.save () =>
 
