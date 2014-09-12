@@ -2,7 +2,7 @@ global.logger = require("../utils/logger")
 
 express       = require 'express'
 http          = require 'http'
-socketio      = require 'socket.io'
+ws 			      = require 'ws'
 config        = require 'config'
 createRoutes  = require './routes'
 presence      = require './presence_manager'
@@ -11,19 +11,21 @@ db = require './db/db'
 
 app     = express()
 server  = http.createServer app
-io      = socketio.listen server
 
-port = config.get('server.port')
+port        = config.get('server.port')
+socketPort  = config.get('server.socketPort')
 
 router = createRoutes()
 
 app.use '/', router
 
-io.on 'connection', (socket) =>
-  socket.on 'connect user', (data, cb) =>
+wss = new ws.Server {port: socketPort}
+
+wss.on 'connection', (socket) =>
+  socket.on 'open', (data, cb) =>
     presence.get().connectUser(data.userId, socket)
 
-  socket.on 'disconnect', (data) =>
+  socket.on 'close', (data) =>
     presence.get().disconnectUser(data.userId)
 
 server.listen port

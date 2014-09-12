@@ -11,13 +11,16 @@ module.exports = class PresenceManager
     instance
 
   connectUser: (userId, socket) ->
+    return unless userId and socket
     @onlineUserIds[userId] = socket
 
   disconnectUser: (userId) ->
-    delete @onlineUserIds userId
+    return unless userId
+    delete @onlineUserIds[userId]
 
   getOnlineUsers: ->
     return @onlineUserIds
 
   isUserOnline: (userId) ->
+    return false unless userId
     userId in @onlineUserIds
