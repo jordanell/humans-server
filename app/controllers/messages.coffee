@@ -27,7 +27,7 @@ class MessagesController extends Controller
               if err
                 res .send err
               else
-                @broadcastMessage message, _.filter conversation.userIds, (userId) => userId isnt req.param('user_id')
+                presence.get().broadcastObject message, _.filter conversation.userIds, (userId) => userId isnt req.param('user_id')
                 res.json {result: "success", message: message}
 
     # GET /messages
@@ -50,12 +50,5 @@ class MessagesController extends Controller
         Message.find {conversationId: conversation.id, }, null, {created: {updated: -1}, skip: ((req.param('page')-1) * @PAGE_SIZE), limit: (@PAGE_SIZE)}, (err, messages) =>
           if err then res.send err
           return res.json {result: "success", messages: messages}
-
-    # Helper methods
-
-    broadcastMessage: (message, userIds = []) ->
-      for userId in userIds
-        if socket = presence.get().getUser userId
-          socket.send message
 
 module.exports = new MessagesController()

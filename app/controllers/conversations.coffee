@@ -2,6 +2,7 @@ Controller    = require './base_controller'
 Conversation  = require '../models/conversation'
 User          = require '../models/user'
 Message       = require '../models/message'
+presence      = require '../presence_manager'
 _             = require 'underscore'
 
 class ConversationsController extends Controller
@@ -23,6 +24,7 @@ class ConversationsController extends Controller
           if err
             res.send err
           else
+            presence.get().broadcastObject conversation, _.filter conversation.userIds, (userId) => userId isnt req.param('user_id')
             res.json {result: "success", conversation: conversation}
 
     # GET /conversations
@@ -66,11 +68,11 @@ class ConversationsController extends Controller
         message = new Message({id: @getId(), body: "The other human has left this conversation", userId: req.param('user_id'), conversationId: req.param('conversation_id'), created: Date()})
 
         message.save () =>
+          presence.get().broadcastObject message, _.filter conversation.userIds, (userId) => userId isnt req.param('user_id')
 
         conversation.save (err) =>
           if err then return res.send err
           res.json {result: "success", message: "Removed from conversation"}
-
 
     getRandomUser: (userId, cb, level = 0) =>
       if level >= 5

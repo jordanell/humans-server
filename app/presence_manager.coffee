@@ -23,5 +23,10 @@ module.exports = class PresenceManager
     getUser: (userId) ->
       return @onlineUserIds[userId]
 
+    broadcastObject: (object, userIds) ->
+      for userId in userIds
+        if socket = @getUser userId
+          socket.send message
+
   @get: ->
     instance ?= new PrivateClass()
