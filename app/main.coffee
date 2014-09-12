@@ -6,6 +6,7 @@ ws 			      = require 'ws'
 config        = require 'config'
 createRoutes  = require './routes'
 presence      = require './presence_manager'
+bodyParser    = require('body-parser')
 
 db = require './db/db'
 
@@ -14,6 +15,9 @@ server  = http.createServer app
 
 port        = config.get('server.port')
 socketPort  = config.get('server.socketPort')
+
+app.use bodyParser.json()
+app.use bodyParser.urlencoded({ extended: false })
 
 router = createRoutes()
 
