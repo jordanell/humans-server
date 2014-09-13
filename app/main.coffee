@@ -36,11 +36,11 @@ server.listen port
 console.log "Make it rain on: #{port}"
 
 # Set up the humans landing page
-webApp = express()
+# webApp = express()
 
-webApp.use('/landing', express.static(__dirname + '/public/landing'))
+# webApp.use('/landing', express.static(__dirname + '/public/landing'))
 
-console.log __dirname + '/public'
+# console.log __dirname + '/public'
 
-webApp.listen 80
-console.log "Making it user friendly on: 80"
+# webApp.listen 80
+# console.log "Making it user friendly on: 80"
