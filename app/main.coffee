@@ -4,12 +4,12 @@ express       = require 'express'
 http          = require 'http'
 ws 			      = require 'ws'
 config        = require 'config'
+bodyParser    = require 'body-parser'
 createRoutes  = require './routes'
 presence      = require './presence_manager'
-bodyParser    = require('body-parser')
+db            = require './db/db'
 
-db = require './db/db'
-
+# Set up the humans api
 app     = express()
 server  = http.createServer app
 
@@ -33,5 +33,14 @@ wss.on 'connection', (socket) =>
     presence.get().disconnectUser(data.userId)
 
 server.listen port
-
 console.log "Make it rain on: #{port}"
+
+# Set up the humans landing page
+webApp = express()
+
+webApp.use('/landing', express.static(__dirname + '/public/landing'))
+
+console.log __dirname + '/public'
+
+webApp.listen 80
+console.log "Making it user friendly on: 80"
