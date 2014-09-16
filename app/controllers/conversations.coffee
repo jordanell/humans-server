@@ -65,7 +65,7 @@ class ConversationsController extends Controller
 
         conversation.userIds = _.without(conversation.userIds, req.param('user_id'))
 
-        message = new Message({id: @getId(), body: "The other human has left this conversation", userId: req.param('user_id'), conversationId: req.param('conversation_id'), created: Date()})
+        message = new Message({id: @getId(), body: "The other human has left this conversation", conversationId: req.param('conversation_id'), created: Date()})
 
         message.save () =>
           presence.get().broadcastObject message, _.filter conversation.userIds, (userId) => userId isnt req.param('user_id')
