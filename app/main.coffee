@@ -20,20 +20,23 @@ app.use bodyParser.json()
 app.use bodyParser.urlencoded({ extended: false })
 
 router = createRoutes()
-
 app.use '/', router
 
 wss = new ws.Server {port: socketPort}
+console.log "Make it sockety on: #{socketPort}"
 
 wss.on 'connection', (socket) =>
-  socket.on 'open', (data, cb) =>
-    presence.get().connectUser(data.userId, socket)
+
+  socket.on 'message', (data) =>
+    data = JSON.parse data
+    if data.userId
+      presence.get().connectUser(data.userId, socket)
 
   socket.on 'close', (data) =>
     presence.get().disconnectUser(data.userId)
 
 server.listen port
-console.log "Make it rain on: #{port}"
+console.log "Make it restful on: #{port}"
 
 # Set up the humans landing page
 # webApp = express()

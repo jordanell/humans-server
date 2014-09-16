@@ -3,4 +3,4 @@ config    = require 'config'
 
 dbName = config.get('server.dbName')
 
-mongoose.connect 'mongodb://localhost/#{dbName}'
+mongoose.connect "mongodb://localhost/#{dbName}"
