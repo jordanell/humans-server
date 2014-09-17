@@ -24,7 +24,7 @@ class ConversationsController extends Controller
           if err
             res.send err
           else
-            presence.get().broadcastObject conversation, _.filter conversation.userIds, (userId) => userId isnt req.param('user_id')
+            presence.get().broadcastObject 'conversation', conversation, _.filter conversation.userIds, (userId) => userId isnt req.param('user_id')
             res.json {result: "success", conversation: conversation}
 
     # GET /conversations
@@ -68,7 +68,7 @@ class ConversationsController extends Controller
         message = new Message({id: @getId(), body: "The other human has left this conversation", conversationId: req.param('conversation_id'), created: Date()})
 
         message.save () =>
-          presence.get().broadcastObject message, _.filter conversation.userIds, (userId) => userId isnt req.param('user_id')
+          presence.get().broadcastObject 'message', message, _.filter conversation.userIds, (userId) => userId isnt req.param('user_id')
 
         conversation.save (err) =>
           if err then return res.send err
