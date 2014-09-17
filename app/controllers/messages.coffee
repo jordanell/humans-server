@@ -27,7 +27,7 @@ class MessagesController extends Controller
               if err
                 res .send err
               else
-                presence.get().broadcastObject message, _.filter conversation.userIds, (userId) => userId isnt req.param('user_id')
+                presence.get().broadcastObject 'message', message, _.filter conversation.userIds, (userId) => userId isnt req.param('user_id')
                 res.json {result: "success", message: message}
 
     # GET /messages

@@ -29,6 +29,7 @@ wss.on 'connection', (socket) =>
 
   socket.on 'message', (data) =>
     data = JSON.parse data
+
     if data.userId
       presence.get().connectUser(data.userId, socket)
 
