@@ -9,7 +9,9 @@ createRoutes  = require './routes'
 presence      = require './presence_manager'
 db            = require './db/db'
 
-# Set up the humans api
+###
+# Restful API
+###
 app     = express()
 server  = http.createServer app
 
@@ -22,6 +24,9 @@ app.use bodyParser.urlencoded({ extended: false })
 router = createRoutes()
 app.use '/', router
 
+###
+# Websocket Server
+###
 wss = new ws.Server {port: socketPort}
 console.log "Make it sockety on: #{socketPort}"
 
@@ -39,12 +44,13 @@ wss.on 'connection', (socket) =>
 server.listen port
 console.log "Make it restful on: #{port}"
 
-# Set up the humans landing page
-# webApp = express()
+###
+# Landing
+###
+webApp = express()
 
-# webApp.use('/landing', express.static(__dirname + '/public/landing'))
+webApp.use('/', express.static(__dirname + '/public/landing'))
 
-# console.log __dirname + '/public'
+webApp.listen config.landing.port
 
-# webApp.listen 80
-# console.log "Making it user friendly on: 80"
+console.log "Making it user friendly on: #{config.landing.port}"

@@ -2,5 +2,8 @@
   "server": {
     "port": 4444,
     "socketPort": 8080
+  },
+  "landing": {
+    "port": 8888
   }
 }
