@@ -1,15 +1,15 @@
 @charset "UTF-8";
-/*   
+/*
 Theme Name: Proto App
 Description: A beautiful and simple theme to showcase your app
 Author: João Alberto
 Author URI: http://jalberto.blacksheepz.org
 Version: 1.0
 */
-/*--------------------------------------------------------------------------------------- 
+/*---------------------------------------------------------------------------------------
   INDEX
 ---------------------------------------------------------------------------------------*/
-/* 
+/*
   1) BASIC STYLES
   2) FONTS
   3) HEADER
@@ -21,7 +21,7 @@ Version: 1.0
   X) DEVICE SELECTION
 */
 
-/*-------------------------------- 
+/*--------------------------------
   1) BASIC STYLES
 --------------------------------*/
 ::-moz-selection { background: #d1ef51; color: #344955; text-shadow: none; }
@@ -46,14 +46,14 @@ textarea { resize: vertical; min-height: 100px; }
 
 .hide-text { text-indent: 100%; white-space: nowrap; overflow: hidden; }
 
-/* 
+/*
   SPRITES
 */
 .arrow, .ios a, .android a, .windows a, ul#features-list li, .s-fbook a, .s-twitter a, .s-instag a, .s-youtube a { background: url("../images/icons.png") no-repeat top left; }
 
 .ios-l a, .android-l a, .windows-l a { background: url("../images/download_logos/download-logos.png") no-repeat top left; }
 
-/*-------------------------------- 
+/*--------------------------------
   2) FONTS
 --------------------------------*/
 .button { font-family: 'Varela Round', sans-serif; font-weight: 400; font-style: normal; }
@@ -66,7 +66,7 @@ textarea { resize: vertical; min-height: 100px; }
 
 .button { font-size: 1.125rem; }
 
-/*-------------------------------- 
+/*--------------------------------
   3) HEADER
 --------------------------------*/
 #hero-header { background: url("../images/backgrounds/header-blue.jpg") center center; -webkit-box-shadow: 0 -4px 0 0 rgba(0, 0, 0, 0.1) inset; -moz-box-shadow: 0 -4px 0 0 rgba(0, 0, 0, 0.1) inset; box-shadow: 0 -4px 0 0 rgba(0, 0, 0, 0.1) inset; }
@@ -88,8 +88,9 @@ textarea { resize: vertical; min-height: 100px; }
 #hero-header .f-dropdown .ios a { background-position: 96% -63px; }
 #hero-header .f-dropdown .android a { background-position: 96% 15px; }
 #hero-header .f-dropdown .windows a { background-position: 96% -675px; }
+.mascot { max-height: 300px;}
 
-/*-------------------------------- 
+/*--------------------------------
   4) SHOWCASE
 --------------------------------*/
 #showcase { background: url("../images/backgrounds/info-blue.jpg") center center; -webkit-box-shadow: 0 -4px 0 0 rgba(0, 0, 0, 0.1) inset; -moz-box-shadow: 0 -4px 0 0 rgba(0, 0, 0, 0.1) inset; box-shadow: 0 -4px 0 0 rgba(0, 0, 0, 0.1) inset; color: white; }
@@ -115,18 +116,18 @@ textarea { resize: vertical; min-height: 100px; }
 @media only screen and (min-width: 40.063em) and (max-width: 64em) { #showcase .clearing-thumbs li, #showcase [data-clearing] li { display: inline-block; float: none; } }
 @media only screen and (max-width: 40em) { #showcase .clearing-thumbs li, #showcase [data-clearing] li { display: inline-block; float: none; } }
 
-/* 
+/*
   iPhone Slideshow
-*/ 
+*/
 #showcase .slider-container.iphone { background: url("../images/device_ios.png") no-repeat center bottom; height: 635px; width: 356px; margin: 1.4375rem auto 0 auto; }
 #showcase .slider-container.iphone .orbit-container { margin: 0 0 0 1.9375rem; padding-top: 6.5rem; width: 84%; }
 #showcase .slider-container.iphone .orbit-container .orbit-timer { right: 80px; top: 80px; }
 #showcase .slider-container.iphone .orbit-container .orbit-timer.paused > span { display: none; }
 #showcase .slider-container.iphone .orbit-container .orbit-progress { background-color: #d1ef51; }
 
-/* 
+/*
   Android Slideshow
-*/ 
+*/
 #showcase .slider-container.android-phone { background: url("../images/device_android.png") no-repeat center bottom; height: 639px; width: 370px; margin: 1.4375rem auto 0 auto; }
 #showcase .slider-container.android-phone .orbit-container { margin: 0 0 0 1.125rem; padding-top: 3.75rem; width: 90%; }
 #showcase .slider-container.android-phone .orbit-container .orbit-timer { right: 95px; top: 44px; }
@@ -142,7 +143,7 @@ textarea { resize: vertical; min-height: 100px; }
 #showcase .slider-container.windows-phone .orbit-container .orbit-timer.paused > span { display: none; }
 #showcase .slider-container.windows-phone .orbit-container .orbit-progress { background-color: #d1ef51; }
 
-/*-------------------------------- 
+/*--------------------------------
   5) DOWNLOAD
 --------------------------------*/
 #download h3 { color: #344955; padding-top: 1.5625rem; }
@@ -157,7 +158,7 @@ textarea { resize: vertical; min-height: 100px; }
 #download .windows-l a { background-position: 0 -696px; height: 144px; width: 133px; }
 #download .windows-l a:hover { background-position: 0 -870px; }
 
-/*-------------------------------- 
+/*--------------------------------
   6) SUBSCRIBE
 --------------------------------*/
 #subscribe { margin-bottom: 1.25rem; }
@@ -167,7 +168,7 @@ textarea { resize: vertical; min-height: 100px; }
 #subscribe form button { margin: 0; background-color: #00a9e0; padding: 0.875rem 1.25rem; color: white; font-size: 1.125rem; height: 3.3125rem; }
 @media only screen and (min-width: 40.063em) { #subscribe form .left-off { margin-left: 12.625rem; } }
 
-/*-------------------------------- 
+/*--------------------------------
   7) SOCIAL
 --------------------------------*/
 #social { margin-top: 1.25rem; }
@@ -180,7 +181,7 @@ textarea { resize: vertical; min-height: 100px; }
 #social ul .s-instag a { background-position: 0 -311px; }
 #social ul .s-youtube a { background-position: 0 -609px; }
 
-/*-------------------------------- 
+/*--------------------------------
   8) FOOTER
 --------------------------------*/
 #main-footer { background: url("../images/backgrounds/header-blue.jpg") center center; min-height: 75px; height: auto; margin-top: 1.125rem; padding-top: 1.875rem; }
@@ -208,7 +209,7 @@ textarea { resize: vertical; min-height: 100px; }
 #contactModal p a { color: #344955; }
 #contactModal p a:hover { color: #7c8f99; }
 
-/*-------------------------------- 
+/*--------------------------------
   X) DEVICE SELECTION
 --------------------------------*/
 #select-device { background: url("../images/backgrounds/header-blue.jpg") center center; }

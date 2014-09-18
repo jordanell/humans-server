@@ -53,4 +53,4 @@ webApp.use('/', express.static(__dirname + '/public/landing'))
 
 webApp.listen config.landing.port
 
-console.log "Making it user friendly on: #{config.landing.port}"
+console.log "Making it landy on: #{config.landing.port}"
