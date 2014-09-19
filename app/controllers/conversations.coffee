@@ -13,7 +13,7 @@ class ConversationsController extends Controller
         return res.json err: "Must provide a user id"
 
       @getRandomUser req.param('user_id'), (err, user) =>
-        return res.json err: "Could not find a user" if user is null
+        return res.json err: "Could not find a user" unless user
 
         userIds = [user.id, req.param('user_id')]
         time    = Date()
