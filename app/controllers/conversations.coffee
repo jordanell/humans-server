@@ -79,9 +79,9 @@ class ConversationsController extends Controller
         return cb({err: "Could not find user"}, null)
 
       User.random (err, user) =>
-        if err then return cb({err: "Could not find user"}, null)
+        if err or !user? then return cb({err: "Could not find user"}, null)
 
-        if user.id == userId
+        if user.id is userId
           return @getRandomUser(userId, cb, level + 1)
 
         return cb(null, user)
