@@ -52,6 +52,25 @@ class ConversationsController extends Controller
 
         return res.json {result: "success", conversation: conversation}
 
+    # PUT /conversations/seen
+    seen: (req, res) =>
+      unless req.param('user_id')
+        return res.json err: "Must provide a user id"
+
+      Conversation.findOne { id: req.param('conversation_id') }, (err, conversation) =>
+        if err then res.send err
+
+        if !_.contains(conversation.userIds, req.param('user_id'))
+          return res.json {err: "Unauthorized access"}
+
+        conversation.seenIds.push req.param('user_id')
+        conversation.seenIds = _.uniq conversation.seenIds
+
+        conversation.save (err) =>
+          if err then return res.send err
+          res.json {result: "success", message: "Seen conversation"}
+
+
     # PUT /conversations/leave
     leave: (req, res) =>
       unless req.param('user_id')

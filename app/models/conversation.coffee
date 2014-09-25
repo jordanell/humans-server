@@ -6,6 +6,7 @@ ConversationSchema = new Schema
   userIds:      []
   name:         String
   lastMessage:  String
+  seenIds:      []
   created:      Date
   updated:      Date
 

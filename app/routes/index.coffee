@@ -18,7 +18,8 @@ module.exports = (router) ->
   ######### Conversation ###########
   ##################################
 
-  Router.resource 'conversations', controller: 'conversations', only: [create, index, show]
+  Router.resource 'conversations',  controller: 'conversations', only: [create, index, show]
+  Router.put 'conversations/seen',  controller: 'conversations', action: 'seen'
   Router.put 'conversations/leave', controller: 'conversations', action: 'leave'
 
   ##################################

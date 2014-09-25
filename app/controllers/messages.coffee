@@ -23,6 +23,10 @@ class MessagesController extends Controller
           else
             conversation.updated = message.created
             conversation.lastMessage = message.body
+
+            conversation.seenIds.push req.param('user_id')
+            conversation.seenIds = _.uniq conversation.seenIds
+
             conversation.save (err) =>
               if err
                 res .send err
