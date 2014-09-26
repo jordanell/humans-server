@@ -49,7 +49,7 @@ class MessagesController extends Controller
         unless req.param('page')
           req.params.page = 1
 
-        Message.find {conversationId: conversation.id, }, null, {created: {updated: -1}, skip: ((req.param('page')-1) * @PAGE_SIZE), limit: (@PAGE_SIZE)}, (err, messages) =>
+        Message.find {conversationId: conversation.id, }, null, {sort: {created: -1}, skip: ((req.param('page')-1) * @PAGE_SIZE), limit: (@PAGE_SIZE)}, (err, messages) =>
           if err then res.send err
           return res.json {result: "success", messages: messages}
 
