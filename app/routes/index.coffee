@@ -12,7 +12,7 @@ module.exports = (router) ->
   ############ Users ###############
   ##################################
 
-  Router.resource 'users', controller: 'users', only: [create, update]
+  Router.resource 'users', controller: 'users', only: [create, update, show]
 
   ##################################
   ######### Conversation ###########

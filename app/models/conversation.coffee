@@ -4,7 +4,6 @@ Schema    = mongoose.Schema
 ConversationSchema = new Schema
   id:           String
   userIds:      []
-  name:         String
   lastMessage:  String
   seenIds:      []
   created:      Date

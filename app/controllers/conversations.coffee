@@ -44,8 +44,11 @@ class ConversationsController extends Controller
       unless req.param('user_id')
         return res.json err: "Must provide a user id"
 
-      Conversation.findOne { id: req.param('conversation_id') }, (err, conversation) =>
+      Conversation.findOne { id: req.param('id') }, (err, conversation) =>
         if err then res.send err
+
+        unless conversation
+          return res.json {err: "Could not find conversation"}
 
         if !_.contains(conversation.userIds, req.param('user_id'))
           return res.json {err: "Unauthorized access"}

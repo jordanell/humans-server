@@ -25,4 +25,16 @@ class UsersController extends Controller
             if err then return res.send err
             res.json {result: "success", user: user}
 
+    # GET /users/:id
+    show: (req, res) =>
+      User.findOne { id: req.param('id') }, (err, user) =>
+        if err
+          return res.send err
+
+        unless user
+          return res.json {err: "Could not find user"}
+
+        res.json {result: "success", user: user}
+
+
 module.exports = new UsersController()
