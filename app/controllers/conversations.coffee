@@ -12,20 +12,29 @@ class ConversationsController extends Controller
       unless req.param('user_id')
         return res.json err: "Must provide a user id"
 
-      @getRandomUser req.param('user_id'), (err, user) =>
-        return res.json err: "Could not find a user" unless user
+      User.findOne { id: req.param('user_id') }, (err, user) =>
+        if err
+          return res.send err
 
-        userIds = [user.id, req.param('user_id')]
-        time    = Date()
+        unless user
+          return res.json {err: "Could not find user"}
 
-        conversation = new Conversation({id: @getId(), userIds: userIds, name: user.name, created: time, updated: time})
+        originalUser = user
 
-        conversation.save (err) =>
-          if err
-            res.send err
-          else
-            presence.get().broadcastObject 'conversation', conversation, _.filter conversation.userIds, (userId) => userId isnt req.param('user_id')
-            res.json {result: "success", conversation: conversation}
+        @getRandomUser req.param('user_id'), (err, user) =>
+          return res.json err: "Could not find a user" unless user
+
+          users = [user._id, originalUser._id]
+          time  = Date()
+
+          conversation = new Conversation({id: @getId(), users: users, created: time, updated: time})
+
+          conversation.save (err) =>
+            if err
+              res.send err
+            else
+              presence.get().broadcastObject 'conversation', conversation, _.filter conversation.users, (userId) => userId isnt originalUser._id
+              res.json {result: "success", conversation: conversation}
 
     # GET /conversations
     index: (req, res) =>
@@ -35,66 +44,94 @@ class ConversationsController extends Controller
       unless req.param('page')
         req.params.page = 1
 
-      Conversation.find {userIds: {$in: [req.param('user_id')]}}, null, {sort: {updated: -1}, skip: ((req.param('page')-1) * @PAGE_SIZE), limit: (@PAGE_SIZE)}, (err, conversations) =>
-        if err then res.send err
-        return res.json {result: "success", conversations: conversations}
+      User.findOne { id: req.param('user_id') }, (err, user) =>
+        if err
+          return res.send err
+
+        unless user
+          return res.json {err: "Could not find user"}
+
+        Conversation.find({users: {$in: [user._id]}}, null, {sort: {updated: -1}, skip: ((req.param('page')-1) * @PAGE_SIZE), limit: (@PAGE_SIZE)}).populate('users lastMessage').exec (err, conversations) =>
+          if err then res.send err
+          return res.json {result: "success", conversations: conversations}
 
     # GET /conversations/:id
     show: (req, res) =>
       unless req.param('user_id')
         return res.json err: "Must provide a user id"
 
-      Conversation.findOne { id: req.param('id') }, (err, conversation) =>
-        if err then res.send err
+      User.findOne { id: req.param('user_id') }, (err, user) =>
+        if err
+          return res.send err
 
-        unless conversation
-          return res.json {err: "Could not find conversation"}
+        unless user
+          return res.json {err: "Could not find user"}
 
-        if !_.contains(conversation.userIds, req.param('user_id'))
-          return res.json {err: "Unauthorized access"}
+        Conversation.findOne({ id: req.param('id') }).populate('users lastMessage').exec (err, conversation) =>
+          if err then res.send err
 
-        return res.json {result: "success", conversation: conversation}
+          unless conversation
+            return res.json {err: "Could not find conversation"}
+
+          if !_.contains(_.pluck(conversation.users, "id"), req.param('user_id'))
+            return res.json {err: "Unauthorized access"}
+
+          return res.json {result: "success", conversation: conversation}
 
     # PUT /conversations/seen
     seen: (req, res) =>
       unless req.param('user_id')
         return res.json err: "Must provide a user id"
 
-      Conversation.findOne { id: req.param('conversation_id') }, (err, conversation) =>
-        if err then res.send err
+      User.findOne { id: req.param('user_id') }, (err, user) =>
+        if err
+          return res.send err
 
-        if !_.contains(conversation.userIds, req.param('user_id'))
-          return res.json {err: "Unauthorized access"}
+        unless user
+          return res.json {err: "Could not find user"}
 
-        conversation.seenIds.push req.param('user_id')
-        conversation.seenIds = _.uniq conversation.seenIds
+        Conversation.findOne({ id: req.param('conversation_id') }).populate('users').exec (err, conversation) =>
+          if err then res.send err
 
-        conversation.save (err) =>
-          if err then return res.send err
-          res.json {result: "success", message: "Seen conversation"}
+          if !_.contains(_.pluck(conversation.users, "id"), req.param('user_id'))
+            return res.json {err: "Unauthorized access"}
 
+          conversation.seenUsers.push user._id
+          conversation.seenUsers = _.uniq conversation.seenUsers
+
+          conversation.save (err) =>
+            if err then return res.send err
+            res.json {result: "success", message: "Seen conversation"}
 
     # PUT /conversations/leave
     leave: (req, res) =>
       unless req.param('user_id')
         return res.json err: "Must provide a user id"
 
-      Conversation.findOne { id: req.param('conversation_id') }, (err, conversation) =>
-        if err then res.send err
+      User.findOne { id: req.param('user_id') }, (err, user) =>
+        if err
+          return res.send err
 
-        if !_.contains(conversation.userIds, req.param('user_id'))
-          return res.json {err: "Unauthorized access"}
+        unless user
+          return res.json {err: "Could not find user"}
 
-        conversation.userIds = _.without(conversation.userIds, req.param('user_id'))
+        Conversation.findOne({ id: req.param('conversation_id') }).populate('users').exec (err, conversation) =>
+          if err then res.send err
 
-        message = new Message({id: @getId(), body: "The other human has left this conversation", conversationId: req.param('conversation_id'), created: Date()})
+          if !_.contains(_.pluck(conversation.users, "id"), req.param('user_id'))
+            return res.json {err: "Unauthorized access"}
 
-        message.save () =>
-          presence.get().broadcastObject 'message', message, _.filter conversation.userIds, (userId) => userId isnt req.param('user_id')
+          conversation.users = _.without(conversation.users, user._id)
 
-        conversation.save (err) =>
-          if err then return res.send err
-          res.json {result: "success", message: "Removed from conversation"}
+          message = new Message({id: @getId(), body: "The other human has left this conversation", conversationId: req.param('conversation_id'), created: Date()})
+          conversation.lastMessage = message._id
+
+          message.save () =>
+            presence.get().broadcastObject 'message', message, _.filter conversation.users, (user) => user.id isnt req.param('user_id')
+
+          conversation.save (err) =>
+            if err then return res.send err
+            res.json {result: "success", message: "Removed from conversation"}
 
     getRandomUser: (userId, cb, level = 0) =>
       if level >= 5
