@@ -1,5 +1,8 @@
 {
   "server": {
     "dbName": "humans_production"
+  },
+  "landing": {
+    "port": 80
   }
 }

@@ -26,7 +26,7 @@ module.exports = class PresenceManager
     broadcastObject: (type, object, userIds) ->
       for userId in userIds
         if socket = @getUser userId
-          socket.send  JSON.stringify
+          socket.send JSON.stringify
             type: type
             data: object
 
