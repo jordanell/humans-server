@@ -36,7 +36,7 @@ class ConversationsController extends Controller
                 if err
                   return res.send err
 
-                presence.get().broadcastObject 'conversation', conversation, _.filter conversation.users, (userId) => userId isnt originalUser._id
+                presence.get().broadcastObject 'conversation', conversation, _.pluck(_.reject(conversation.users, (cUser) => cUser.id is originalUser.id), "id")
                 res.json {result: "success", conversation: conversation}
 
     # GET /conversations
@@ -131,7 +131,7 @@ class ConversationsController extends Controller
           conversation.lastMessage = message._id
 
           message.save () =>
-            presence.get().broadcastObject 'message', message, _.filter conversation.users, (user) => user.id isnt req.param('user_id')
+            presence.get().broadcastObject 'message', message, _.pluck(_.reject(conversation.users, (cUser) => cUser.id is user.id), "id")
 
           conversation.save (err) =>
             if err then return res.send err
