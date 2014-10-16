@@ -138,6 +138,14 @@ class ConversationsController extends Controller
             res.json {result: "success", message: "Removed from conversation"}
 
     getRandomUser: (userId, cb, level = 0) =>
+      # Check for online users first
+      if level is 0
+        id = presence.get().getRandomUser(userId)
+        if id
+          User.findOne { id: id }, (err, user) =>
+            unless err
+              return user
+
       if level >= 5
         return cb({err: "Could not find user"}, null)
 

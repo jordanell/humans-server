@@ -1,3 +1,5 @@
+_ = require 'underscore'
+
 module.exports = class PresenceManager
 
   instance = null
@@ -22,6 +24,15 @@ module.exports = class PresenceManager
 
     getUser: (userId) ->
       return @onlineUserIds[userId]
+
+    getRandomUser: (userId) ->
+      obj = _.reject @onlineUserIds, (uId) -> uId is userId
+      keys = Object.keys(obj)
+
+      if keys.length > 0
+        obj[keys[keys.length * Math.random() << 0]]
+      else
+        null
 
     broadcastObject: (type, object, userIds) ->
       for userId in userIds
