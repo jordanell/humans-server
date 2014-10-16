@@ -2,11 +2,10 @@ mongoose  = require 'mongoose'
 Schema    = mongoose.Schema
 
 ConversationSchema = new Schema
-  _id:          Number
   id:           String
-  users:        [{ type: Number, ref: 'User' }]
-  lastMessage:  { type: Number, ref: 'Message' }
-  seenUsers:    [{ type: Number, ref: 'User'}]
+  users:        [{ type: String, ref: 'User' }]
+  lastMessage:  { type: String, ref: 'Message' }
+  seenUsers:    [{ type: String, ref: 'User'}]
   created:      Date
   updated:      Date
 

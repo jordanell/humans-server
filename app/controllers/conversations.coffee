@@ -28,13 +28,16 @@ class ConversationsController extends Controller
           time  = Date()
 
           conversation = new Conversation({id: @getId(), users: users, created: time, updated: time})
-
           conversation.save (err) =>
             if err
               res.send err
             else
-              presence.get().broadcastObject 'conversation', conversation, _.filter conversation.users, (userId) => userId isnt originalUser._id
-              res.json {result: "success", conversation: conversation}
+              Conversation.populate conversation, [{path: 'users'}], (err, conversation) =>
+                if err
+                  return res.send err
+
+                presence.get().broadcastObject 'conversation', conversation, _.filter conversation.users, (userId) => userId isnt originalUser._id
+                res.json {result: "success", conversation: conversation}
 
     # GET /conversations
     index: (req, res) =>
@@ -51,7 +54,7 @@ class ConversationsController extends Controller
         unless user
           return res.json {err: "Could not find user"}
 
-        Conversation.find({users: {$in: [user._id]}}, null, {sort: {updated: -1}, skip: ((req.param('page')-1) * @PAGE_SIZE), limit: (@PAGE_SIZE)}).populate('users lastMessage').exec (err, conversations) =>
+        Conversation.find({users: {$in: [user._id]}}, null, {sort: {updated: -1}, skip: ((req.param('page')-1) * @PAGE_SIZE), limit: (@PAGE_SIZE)}).populate('users seenUsers lastMessage').exec (err, conversations) =>
           if err then res.send err
           return res.json {result: "success", conversations: conversations}
 
@@ -67,13 +70,13 @@ class ConversationsController extends Controller
         unless user
           return res.json {err: "Could not find user"}
 
-        Conversation.findOne({ id: req.param('id') }).populate('users lastMessage').exec (err, conversation) =>
+        Conversation.findOne({ id: req.param('id') }).populate('users seenUsers lastMessage').exec (err, conversation) =>
           if err then res.send err
 
           unless conversation
             return res.json {err: "Could not find conversation"}
 
-          if !_.contains(_.pluck(conversation.users, "id"), req.param('user_id'))
+          unless _.contains(_.pluck(conversation.users, "id"), req.param('user_id'))
             return res.json {err: "Unauthorized access"}
 
           return res.json {result: "success", conversation: conversation}
@@ -93,9 +96,10 @@ class ConversationsController extends Controller
         Conversation.findOne({ id: req.param('conversation_id') }).populate('users').exec (err, conversation) =>
           if err then res.send err
 
-          if !_.contains(_.pluck(conversation.users, "id"), req.param('user_id'))
+          unless _.contains(_.pluck(conversation.users, "id"), req.param('user_id'))
             return res.json {err: "Unauthorized access"}
 
+          conversation.seenUsers = _.pluck conversation.seenUsers, "_id"
           conversation.seenUsers.push user._id
           conversation.seenUsers = _.uniq conversation.seenUsers
 
@@ -118,10 +122,10 @@ class ConversationsController extends Controller
         Conversation.findOne({ id: req.param('conversation_id') }).populate('users').exec (err, conversation) =>
           if err then res.send err
 
-          if !_.contains(_.pluck(conversation.users, "id"), req.param('user_id'))
+          unless _.contains(_.pluck(conversation.users, "id"), req.param('user_id'))
             return res.json {err: "Unauthorized access"}
 
-          conversation.users = _.without(conversation.users, user._id)
+          conversation.users = _.reject conversation.users, (cUser) => cUser.id is user.id
 
           message = new Message({id: @getId(), body: "The other human has left this conversation", conversationId: req.param('conversation_id'), created: Date()})
           conversation.lastMessage = message._id

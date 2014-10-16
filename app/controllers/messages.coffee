@@ -1,6 +1,7 @@
 Controller    = require './base_controller'
 Message       = require '../models/message'
 Conversation  = require '../models/conversation'
+User          = require '../models/user'
 presence      = require '../presence_manager'
 _             = require 'underscore'
 
@@ -15,12 +16,12 @@ class MessagesController extends Controller
         if err
           return res.send err
 
-        Conversation.findOne { id: req.param('conversation_id') }, (err, conversation) =>
+        Conversation.findOne({ id: req.param('conversation_id') }).populate('users').exec (err, conversation) =>
           if err
             return res.send err
 
-          if !_.contains(conversation.users, user._id)
-            return res.json err: "Unauthorized conversation access"
+          unless _.contains(_.pluck(conversation.users, "id"), req.param('user_id'))
+            return res.json {err: "Unauthorized access"}
 
           message = new Message({id: @getId(), body: req.param('body'), userId: req.param('user_id'), conversationId: req.param('conversation_id'), created: Date()})
 
@@ -51,11 +52,11 @@ class MessagesController extends Controller
         if err
           return res.send err
 
-        Conversation.findOne { id: req.param('conversation_id') }, (err, conversation) =>
+        Conversation.findOne({ id: req.param('conversation_id') }).populate('users').exec (err, conversation) =>
           if err then return res.send err
 
-          if !_.contains(conversation.users, user._id)
-            return res.json err: "Unauthorized conversation access"
+          unless _.contains(_.pluck(conversation.users, "id"), req.param('user_id'))
+            return res.json {err: "Unauthorized access"}
 
           unless req.param('page')
             req.params.page = 1

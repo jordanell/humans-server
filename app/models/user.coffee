@@ -2,7 +2,6 @@ mongoose  = require 'mongoose'
 Schema    = mongoose.Schema
 
 UserSchema = new Schema
-  _id:  Number
   id:   String
   name: String
 
