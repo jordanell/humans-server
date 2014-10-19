@@ -99,9 +99,7 @@ class ConversationsController extends Controller
           unless _.contains(_.pluck(conversation.users, "id"), req.param('user_id'))
             return res.json {err: "Unauthorized access"}
 
-          conversation.seenUsers = _.pluck conversation.seenUsers, "_id"
           conversation.seenUsers.push user._id
-          conversation.seenUsers = _.uniq conversation.seenUsers
 
           conversation.save (err) =>
             if err then return res.send err
